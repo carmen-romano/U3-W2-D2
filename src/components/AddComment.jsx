@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
 
 const AddComment = props => {
   const [comment, setComment] = useState({
@@ -7,6 +7,8 @@ const AddComment = props => {
     rate: 0,
     elementId: props.asin,
   });
+
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (props.asin !== comment.elementId) {
@@ -31,18 +33,23 @@ const AddComment = props => {
     })
       .then(response => {
         if (response.ok) {
-          alert("Recensione inviata!");
           setComment({
             ...comment,
             comment: "",
             rate: 1,
           });
+
+          setSuccess(true);
+
+          setTimeout(() => {
+            setSuccess(false);
+          }, 2000);
         } else {
           throw new Error("Qualcosa è andato storto");
         }
       })
       .catch(error => {
-        alert(error);
+        console.log(error);
       });
   };
 
@@ -86,6 +93,12 @@ const AddComment = props => {
           Invia
         </Button>
       </Form>
+      {props.asin === null && (
+        <Alert variant="warning">Seleziona un libro!</Alert>
+      )}
+      {success && (
+        <Alert variant="success">Commento inviato con successo</Alert>
+      )}
     </div>
   );
 };
